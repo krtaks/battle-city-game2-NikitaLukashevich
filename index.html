@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <title>Battle City</title>
+</head>
+<body>
+
+  <div class="app"></div>
+
+  <script src="engine/Loader.js"></script>
+  <script src="engine/Renderer.js"></script>
+  <script src="engine/Sprite.js"></script>
+  <script src="engine/Container.js"></script>
+
+  <script>
+    let sprite = null;
+    let spriteLogo = null;
+
+    const { Loader, Renderer, Sprite } = GameEngine;
+    const loader = new Loader();
+    const renderer = new Renderer({
+      width: 900,
+      height: 500,
+      background: '#222',
+
+      update(timestamp) {
+        if(!sprite && !spriteLogo)
+          return;
+
+        sprite.frame.x = sprite.texture.width / 2 + 200 * Math.cos(timestamp / 200)
+        sprite.frame.y = sprite.texture.height / 2 + 200 * Math.sin(timestamp / 200)
+
+        sprite.x = renderer.canvas.width / 2 + 200 * Math.cos(timestamp / 200)
+        sprite.y = renderer.canvas.height / 2 + 200 * Math.sin(timestamp / 200)
+      },
+    });
+
+    document.body.append(renderer.canvas)
+
+    loader.addImage('logo', 'static/Battle-logo.png');
+    loader.addImage('tankLogo', 'static/Tanks.png');
+    loader.addJson('persone', 'static/person.json');
+    loader.addJson('level', 'static/level.json');
+
+    loader.load(() => {
+      sprite = new Sprite(loader.getImage('tankLogo'), {
+        x: renderer.canvas.width / 2,
+        y: renderer.canvas.height / 2,
+        anchorX: 0.5,
+        anchorY: 1,
+        scale: 0.25,
+      });
+
+      spriteLogo = new Sprite(loader.getImage('logo'), {
+        x: renderer.canvas.width / 2,
+        y: renderer.canvas.height / 2,
+        anchorX: 0.5,
+        anchorY: 0.5,
+        scale: 0.25,
+      });
+
+      renderer.stage.add(sprite);
+      renderer.stage.add(spriteLogo);
+    })
+  </script>
+</body>
+</html>
